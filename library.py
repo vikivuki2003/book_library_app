@@ -15,11 +15,9 @@ class Library:
     def add_book(self, title: str, author: str, year: int) -> None:
         """Добавляет новую книгу в библиотеку, если она еще не существует."""
         existing_books = self.storage.find_books(title=title, author=author)
-
         if existing_books:
             print(f"Ошибка: Книга '{title}' автором '{author}' уже существует в библиотеке.")
             return
-
         book = Book(self.get_next_id(), title, author, year)
         self.storage.add_book(book)
         print(f"Книга '{title}' добавлена.")
@@ -31,14 +29,14 @@ class Library:
         else:
             print(f"Книга с ID {book_id} не найдена.")
 
-    def find_books(self, title: Optional[str] = None, author: Optional[str] = None, year: Optional[int] = None) -> None:
-        """Ищет книги по заголовку, автору или году и выводит результаты."""
-        results = self.storage.find_books(title, author, year)
-        if results:
-            for book in results:
-                print(book)
-        else:
-            print("Книги не найдены.")
+    def find_books(self, title: Optional[str] = None, author: Optional[str] = None, year: Optional[int] = None) -> list:
+        """Ищет книги по заголовку, автору или году и возвращает результаты."""
+        try:
+            results = self.storage.find_books(title, author, year)
+            return results
+        except Exception as e:
+            print(f"Произошла ошибка при поиске книг: {e}")
+            return []
 
     def display_books(self) -> None:
         """Отображает все книги в библиотеке."""
@@ -49,9 +47,15 @@ class Library:
         for book in self.storage.books:
             print(book)
 
-    def update_status(self, book_id: int, status: str) -> None:
+    def update_book_status(self, book_id: int, new_status: str) -> str:
         """Обновляет статус книги по ID."""
-        if self.storage.update_status(book_id, status):
-            print(f"Статус книги с ID {book_id} обновлен на '{status}'.")
-        else:
-            print(f"Книга с ID {book_id} не найдена.")
+        valid_statuses = ['в наличии', 'выдана']
+        if new_status not in valid_statuses:
+            return f"Ошибка: статус должен быть одним из следующих: {valid_statuses}."
+
+        book = next((book for book in self.books if book.id == book_id), None)
+        if not book:
+            return f"Книга с ID {book_id} не найдена."
+
+        book.status = new_status
+        return "Статус обновлен!"
