@@ -17,10 +17,10 @@ class Storage:
             print("Ошибка чтения файла или данные повреждены.")
             return []
 
-    def save_books(self) -> None:
-        """Сохраняет книги в файл."""
-        with open(self.filename, 'w', encoding='utf-8') as file:
-            json.dump([book.to_dict() for book in self.books], file, ensure_ascii=False)
+    def save_books(self):
+        with open(self.filename, 'w', encoding='utf-8') as handle:
+            json_data = json.dumps([book.to_dict() for book in self.books], ensure_ascii=False, indent=4)
+            handle.write(json_data)
 
     def add_book(self, book: Book) -> None:
         """Добавляет книгу и сохраняет изменения."""

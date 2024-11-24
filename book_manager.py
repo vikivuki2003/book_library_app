@@ -94,3 +94,6 @@ class BookManager:
         """Проверяет, что статус допустимый."""
         if status not in ['в наличии', 'выдана']:
             raise ValueError("Ошибка: статус должен быть 'в наличии' или 'выдана'.")
+
+    def update_book_status(self):
+        pass
